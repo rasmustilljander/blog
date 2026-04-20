@@ -1,0 +1,88 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+
+  const allTags = new Set(allPosts.flatMap((post) => post.data.tags ?? []));
+
+  return Array.from(allTags).map((tag) => ({
+    params: { tag },
+    props: {
+      tag,
+      posts: allPosts
+        .filter((post) => post.data.tags?.includes(tag))
+        .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()),
+    },
+  }));
+};
+
+const { tag, posts } = Astro.props;
+---
+
+<Layout title={`#${tag}`} description={`Posts tagged with ${tag}.`}>
+  <section>
+    <div class="mb-8">
+      <a href="/tags" class="text-sm text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 no-underline">
+        ← All tags
+      </a>
+      <h1 class="text-2xl font-bold tracking-tight mt-3 text-zinc-900 dark:text-zinc-50">
+        #{tag}
+      </h1>
+      <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+        {posts.length} {posts.length === 1 ? 'post' : 'posts'}
+      </p>
+    </div>
+
+    <ul class="space-y-10">
+      {posts.map((post) => {
+        const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        });
+
+        return (
+          <li>
+            <a href={`/blog/${post.id}`} class="group block no-underline">
+              {post.data.heroImage && (
+                <img
+                  src={post.data.heroImage}
+                  alt={post.data.title}
+                  class="w-full rounded-lg mb-3 aspect-video object-cover"
+                />
+              )}
+              <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-50 group-hover:text-[var(--color-brand)] dark:group-hover:text-[var(--color-brand-dark)] transition-colors">
+                {post.data.title}
+              </h2>
+              <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+                {formattedDate}
+              </p>
+              <p class="text-zinc-600 dark:text-zinc-300 mt-2 text-sm leading-relaxed">
+                {post.data.description}
+              </p>
+            </a>
+            {post.data.tags && post.data.tags.length > 0 && (
+              <div class="flex flex-wrap gap-2 mt-3">
+                {post.data.tags.map((t) => (
+                  <a
+                    href={`/tags/${t}`}
+                    class={`text-xs px-2.5 py-1 rounded-full no-underline font-medium transition-colors
+                      ${t === tag
+                        ? 'bg-zinc-200 text-zinc-800 dark:bg-zinc-700 dark:text-zinc-200'
+                        : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700'
+                      }`}
+                  >
+                    #{t}
+                  </a>
+                ))}
+              </div>
+            )}
+          </li>
+        );
+      })}
+    </ul>
+  </section>
+</Layout>

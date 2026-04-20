@@ -1,0 +1,84 @@
+---
+import Layout from './Layout.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  updatedDate?: Date;
+  heroImage?: string;
+  tags?: string[];
+}
+
+const { title, description, pubDate, updatedDate, heroImage, tags = [] } = Astro.props;
+
+const formattedPubDate = pubDate.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+const formattedUpdatedDate = updatedDate?.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<Layout title={title} description={description} image={heroImage}>
+  <article>
+    {heroImage && (
+      <img
+        src={heroImage}
+        alt={title}
+        class="w-full rounded-xl mb-8 aspect-video object-cover"
+      />
+    )}
+
+    <header class="mb-8">
+      <h1 class="text-3xl font-bold tracking-tight mb-3 text-zinc-900 dark:text-zinc-50">
+        {title}
+      </h1>
+      <div class="text-sm text-zinc-500 dark:text-zinc-400 flex flex-wrap gap-3 items-center mb-4">
+        <time datetime={pubDate.toISOString()}>
+          {formattedPubDate}
+        </time>
+        {updatedDate && (
+          <>
+            <span aria-hidden="true">·</span>
+            <span>
+              Updated <time datetime={updatedDate.toISOString()}>{formattedUpdatedDate}</time>
+            </span>
+          </>
+        )}
+      </div>
+      {tags.length > 0 && (
+        <div class="flex flex-wrap gap-2">
+          {tags.map((tag) => (
+            <a
+              href={`/tags/${tag}`}
+              class="text-xs px-2.5 py-1 rounded-full no-underline font-medium
+                     bg-zinc-100 text-zinc-600 hover:bg-zinc-200
+                     dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700 transition-colors"
+            >
+              #{tag}
+            </a>
+          ))}
+        </div>
+      )}
+    </header>
+
+    <div class="prose">
+      <slot />
+    </div>
+  </article>
+
+  <div class="mt-12 pt-6 border-t border-zinc-200 dark:border-zinc-800">
+    <a
+      href="/"
+      class="text-sm text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 no-underline"
+    >
+      ← All posts
+    </a>
+  </div>
+</Layout>

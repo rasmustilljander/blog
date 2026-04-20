@@ -1,0 +1,68 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+}
+
+const { title, description = 'A personal blog.', image } = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="canonical" href={canonicalURL} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {image && <meta property="og:image" content={new URL(image, Astro.site)} />}
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="min-h-screen flex flex-col">
+      <header class="border-b border-zinc-200 dark:border-zinc-800">
+        <div class="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
+          <a href="/" class="font-semibold text-lg no-underline text-zinc-900 dark:text-zinc-100">
+            Your Blog
+          </a>
+          <nav class="flex gap-5 text-sm">
+            <a href="/" class="text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 no-underline">
+              Posts
+            </a>
+            <a href="/tags" class="text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 no-underline">
+              Tags
+            </a>
+          </nav>
+        </div>
+      </header>
+
+      <main class="flex-1 max-w-2xl mx-auto px-4 py-12 w-full">
+        <slot />
+      </main>
+
+      <footer class="border-t border-zinc-200 dark:border-zinc-800">
+        <div class="max-w-2xl mx-auto px-4 py-6 text-sm text-zinc-500 dark:text-zinc-500">
+          © {new Date().getFullYear()} Your Name
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

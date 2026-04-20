@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
+
+  --color-brand: oklch(55% 0.2 250);
+  --color-brand-dark: oklch(70% 0.18 250);
+}
+
+@layer base {
+  :root {
+    color-scheme: light dark;
+  }
+
+  body {
+    @apply bg-white text-zinc-900 antialiased;
+    @apply dark:bg-zinc-950 dark:text-zinc-100;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+
+  a {
+    @apply text-[var(--color-brand)] underline underline-offset-2;
+    @apply dark:text-[var(--color-brand-dark)];
+  }
+
+  pre {
+    @apply rounded-lg p-4 overflow-x-auto text-sm;
+    @apply bg-zinc-100 dark:bg-zinc-900;
+  }
+
+  code:not(pre code) {
+    @apply font-mono text-sm px-1 py-0.5 rounded;
+    @apply bg-zinc-100 text-zinc-800;
+    @apply dark:bg-zinc-800 dark:text-zinc-200;
+  }
+
+  .prose img {
+    @apply rounded-lg mx-auto;
+  }
+
+  hr {
+    @apply border-zinc-200 dark:border-zinc-800;
+  }
+
+  blockquote {
+    @apply border-l-4 border-zinc-300 pl-4 italic text-zinc-600;
+    @apply dark:border-zinc-600 dark:text-zinc-400;
+  }
+
+  .prose h2 {
+    @apply text-xl font-semibold mt-8 mb-3;
+  }
+
+  .prose h3 {
+    @apply text-lg font-semibold mt-6 mb-2;
+  }
+
+  .prose p {
+    @apply leading-7 mb-4 text-zinc-700 dark:text-zinc-300;
+  }
+
+  .prose ul {
+    @apply list-disc list-inside mb-4 space-y-1 text-zinc-700 dark:text-zinc-300;
+  }
+
+  .prose ol {
+    @apply list-decimal list-inside mb-4 space-y-1 text-zinc-700 dark:text-zinc-300;
+  }
+
+  .prose pre {
+    @apply mb-4;
+  }
+
+  .prose blockquote {
+    @apply my-4;
+  }
+}
