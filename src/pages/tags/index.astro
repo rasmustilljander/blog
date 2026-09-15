@@ -1,0 +1,42 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+
+const tagCounts = allPosts.reduce<Record<string, number>>((acc, post) => {
+  for (const tag of post.data.tags ?? []) {
+    acc[tag] = (acc[tag] ?? 0) + 1;
+  }
+  return acc;
+}, {});
+
+const tags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]);
+---
+
+<Layout title="Tags" description="Browse posts by tag.">
+  <section>
+    <h1 class="text-2xl font-bold tracking-tight mb-8 text-zinc-900 dark:text-zinc-50">
+      Tags
+    </h1>
+
+    {tags.length === 0 && (
+      <p class="text-zinc-500 dark:text-zinc-400">No tags yet.</p>
+    )}
+
+    <ul class="flex flex-wrap gap-3">
+      {tags.map(([tag, count]) => (
+        <li>
+          <a
+            href={`/tags/${tag}`}
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full no-underline
+                   bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 transition-colors"
+          >
+            <span class="text-sm font-medium text-zinc-700 dark:text-zinc-300">#{tag}</span>
+            <span class="text-xs text-zinc-400 dark:text-zinc-500">{count}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+</Layout>
